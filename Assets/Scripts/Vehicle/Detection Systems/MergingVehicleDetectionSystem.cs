@@ -21,7 +21,7 @@ public partial struct MergingVehicleDetectionSystem : ISystem
             var segment = SystemAPI.GetComponent<Segment>(vehicle.ValueRO.CurrentSegment);
             var vehiclePosition = transform.ValueRO.Position;
 
-            var distanceToMergingVehicle = 0f;
+            var distanceToMergingVehicle = float.MaxValue;
             foreach (var (mergingVehicle, mergingTransform) 
                 in SystemAPI.Query<RefRW<Vehicle>, RefRO<LocalTransform>>().WithAll<MergeTag>())
             {
@@ -51,6 +51,7 @@ public partial struct MergingVehicleDetectionSystem : ISystem
         var distanceDot = math.dot(math.normalize(distanceDirection), math.normalize(vehicleHeadingDirection));
 
         return distanceToMergeAhead < criticalStopDistance && distanceDot > 0;
+        // TODO: [MTS-55] handle distanceDot =< 0 scenarios, which may indicate merging vehicle is the one blocked, not incoming traffic.
     }
 
     public void TrySetNearestObstacle(ref NearestDectectedObstacle nearestObstacle, float distance, ObstacleType obstacleType)
