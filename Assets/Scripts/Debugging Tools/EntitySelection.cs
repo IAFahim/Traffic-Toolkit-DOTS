@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
 using UnityEditor;
+
 #if UNITY_EDITOR
 
 [InitializeOnLoad]
@@ -22,7 +23,11 @@ public class EntitySelection
             return;
 
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+#if UNITY_6000_0_OR_NEWER
+        if (!entityManager.Exists(SelectedEntity))
+#else
         if (entityManager.EntityCapacity <= SelectedEntity.Index || !entityManager.Exists(SelectedEntity))
+#endif
         {
             SelectedEntity = Entity.Null;
             SelectionChanged?.Invoke(Entity.Null);
